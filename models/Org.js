@@ -25,6 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       type:   DataTypes.STRING,
       unique: 'unique_user_phone',
     },
+    sender:   DataTypes.STRING,
     walletbalance:   DataTypes.DOUBLE,
   }, {});
 

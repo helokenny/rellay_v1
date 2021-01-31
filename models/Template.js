@@ -7,8 +7,19 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey:   true,
       autoIncrement: true,
     },
+    name:           {
+      type:         DataTypes.STRING,
+      unique:       'unique_template_name',
+    },
     message:        DataTypes.STRING,
-    recipients:     DataTypes.INTEGER,
+    recurrence:     DataTypes.STRING,
+    recurrence_week:   DataTypes.INTEGER,
+    recurrence_day:    DataTypes.STRING,
+    recurrence_date:   DataTypes.STRING,
+    bydateorday:    DataTypes.STRING,
+    monthday:       DataTypes.INTEGER,
+    timetosend:     DataTypes.STRING,
+    status:         DataTypes.STRING,   //  ACTIVE | DISABLED | PAUSED
   }, {});
 
   Template.associate = function (models) {

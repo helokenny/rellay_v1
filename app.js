@@ -9,13 +9,14 @@ var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 var flash        = require('express-flash');
 
+const kenniScheduler = require('./kenniScheduler');
 const apiRouter = require('./apis');
 
 const app = express(); 
 
 var sessionStore = new session.MemoryStore;
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // app.use(fileUpload());
 app.use(cookieParser('secret'));
@@ -49,5 +50,8 @@ db.authenticate()
   console.log   ('Main Database connected...');
   //  start server
   app.listen(PORT, console.log(`Server running on port ${PORT} ...`));
+
+  //  start my awesome scheduler
+  kenniScheduler.run();
 })
 .catch(err => console.log('Error: ' + err));

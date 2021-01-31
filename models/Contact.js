@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     email:      DataTypes.STRING,
     address:    DataTypes.STRING,
     gender:     DataTypes.STRING,
-    dob:        DataTypes.DATE,
+    dob:        DataTypes.STRING,
     catg:       DataTypes.STRING,
     level:      DataTypes.DOUBLE,
     rating:     DataTypes.DOUBLE,
@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
     });
     Contact.belongsTo(models.Org, {
       foreignKey: 'orgId'
+    });
+    Contact.hasMany(models.Message, {
+      foreignKey: 'contactId'
+    });
+    Contact.hasMany(models.Feedback, {
+      foreignKey: 'contactId'
     });
   }
   
