@@ -22,7 +22,7 @@ module.exports = function(app) {
   app.get ('/api/testtest',   function (req, res) {
     console.log('I DEY SEE YOU!');
     req.send('I SEE YOU!!')
-  };
+  });
   app.get ('/api/getcontacts',   isAuthenticated, contactController.fetch);
   app.post ('/api/addcontact',   isAuthenticated, contactController.add);
   app.get ('/api/getmembers',    isAuthenticated, memberController.fetch);
