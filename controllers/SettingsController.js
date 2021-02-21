@@ -8,7 +8,7 @@ exports.fetch = async (req, res) => {
 
     try {
 
-        const settings = await models.Setting.find({
+        const settings = await models.Setting.findAll({
             where: {
                 orgId: req.user.orgId,
             }
@@ -30,77 +30,49 @@ exports.update = async (req, res) => {
 
     try {
 
-        const org = await models.User.findByPk(req.user.orgId,{
-            attributes: ['sender']
-        });
- 
-        if(!org) throw "no_org";
-        if(!org.sender) throw "no_sender";
-        if(!msg || !contacts || contacts.length === 0) throw 'invalid_fields';
+        const dur_figure = req.body.contactExpiryFigure;
+        const dur_period = req.body.contactExpiryPeriod;
+        let duration = 0;
 
-        const contacts_ = await models.Contact.find({
-            where: {
-                id: contacts,
-                orgId: req.user.orgId
-            }
-        })
+        switch (dur_period) {
+            case 'days':
+                duration = dur_figure;
+                break;
+        
+            case 'weeks':
+                duration = dur_figure * 7;
+                break;
+        
+            case 'months':
+                duration = dur_figure * 30;
+                break;
 
-        console.log('konts are ' , JSON.stringify(contacts_));
-        if(!contacts_ || contacts_.length === 0) throw 'invalid_contacts';
-
-        let msg_ = msg.replace
-        .replace(/\[title\]/g,  'XXX')
-        .replace(/\[firstname\]/g,  'XXXXXXX')
-        .replace(/\[surname\]/g,  'XXXXXXX');
-
-        const savemsg = await models.Message.create({
-            message: msg,
-            orgId: req.user.orgId,
-            userId: user_id,
-            recipients: contacts_.length,
-        })
-
-        if(!savemsg) throw 'error';
-
-        if(msg != msg_) {
-            contacts_.forEach(k => {
-                let msg_ = msg.replace
-                .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
-                .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
-                .replace(/\[surname\]/g,  k.fullname.split(' ')[1])
-
-                const data = {
-                    "token":    TSN.TOKEN,
-                    "sender":   org.sender,
-                    "message":  msg_,
-                    "contacts": [{ phone: k.phone, country: 234 }],
-                    "schedule": '',
-                }
-            })
-        } else {
-            const contactlist = contacts_.map(k => { return { phone: k.phone, country: 234 } })
-            const data = {
-                "token":    TSN.TOKEN,
-                "sender":   org.sender,
-                "message":  msg_,
-                "contacts": contactlist,
-                "schedule": '',
-            }
+            case 'years':
+                duration = dur_figure * 365;
+                break;
+        
+            default:
+                break;
         }
 
-        let tosend = {
-            method: 'POST',
-            url: TSN.URL,
-            data,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              }
-        };
+        const orgsett = await models.Setting.update({
+            equal_rights:   req.body.eadminSwitch,
+            contact_display: req.body.contactDisplay,
+            contact_tenure: duration,
+            contact_period: req.body.contactExpiryPeriod,
+            contact_expiry_action: req.body.contactExpiryAction,
+            contact_weighting: req.body.fuweightSwitch,
+            contact_msg_weight: req.body.messageWeight,
+            contact_call_weight: req.body.callWeight,
+            contact_visit_weight: req.body.visitWeight,
+        },{
+            where: {
+                orgId: req.user.id
+            }
+        });
         
-        let ret = await axios(tosend);
-        if(ret.data && ret.data.status == "ok") {
-            res.send({ status: "success", msgid: savemsg.id})
+        if(orgsett) {
+            res.send({ status: "success" })
         } else {
             res.send({ status: "error", msg: "An error occurred"})
         }

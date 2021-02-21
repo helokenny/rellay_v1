@@ -1,41 +1,43 @@
-var express = require('express');
-var router = express.Router();
-var cors = require("cors");
+const express = require('express');
+const router = express.Router();
+const cors = require("cors");
 
-var db = require("../models");
-var passport = require("../config/passport");
-var contactController = require('../controllers/ContactController');
-var memberController = require('../controllers/MemberController');
-var templateController = require('../controllers/TemplateController');
-var messageController = require('../controllers/MessageController');
-var feedbackController = require('../controllers/FeedbackController');
-var orgController = require('../controllers/OrgController');
-var settingsController = require('../controllers/SettingsController');
+const sequelize = require('../config/db');
+const db = require("../models");
+const passport = require("../config/passport");
+const contactController = require('../controllers/ContactController');
+const memberController = require('../controllers/MemberController');
+const templateController = require('../controllers/TemplateController');
+const messageController = require('../controllers/MessageController');
+const feedbackController = require('../controllers/FeedbackController');
+const orgController = require('../controllers/OrgController');
+const settingsController = require('../controllers/SettingsController');
 const jwt = require('../config/jwt');
 // Requiring our models and passport as we've configured it
 //
 
-var isAuthenticated = require("../config/middleware/isAuthenticated");
+const isAuthenticated = require("../config/middleware/isAuthenticated");
 const models = require('../models');
 
 module.exports = function(app) {
-  app.get ('/api/testtest',   function (req, res) {
+  /* app.get ('/api/testtest',   function (req, res) {
     console.log('I DEY SEE YOU!');
-    req.send('I SEE YOU!!')
-  });
+    res.send('I SEE YOU!!')
+  }); */
   app.get ('/api/getcontacts',   isAuthenticated, contactController.fetch);
   app.post ('/api/addcontact',   isAuthenticated, contactController.add);
   app.get ('/api/getmembers',    isAuthenticated, memberController.fetch);
   app.post ('/api/addmember',    isAuthenticated, memberController.add);
   app.get ('/api/gettemplates',  isAuthenticated, templateController.fetch);
-  app.post ('/api/savetemplate',  isAuthenticated, templateController.add);
+  app.post ('/api/addtemplate',  isAuthenticated, templateController.add);
+  app.post ('/api/updatetemplate',  isAuthenticated, templateController.update);
   app.get ('/api/getmessages',   isAuthenticated, messageController.fetch);
   app.post ('/api/sendmessage',  isAuthenticated, messageController.add);
   app.get ('/api/getfeedbacks',  isAuthenticated, feedbackController.fetch);
   app.post ('/api/addfeedback',  isAuthenticated, feedbackController.add);
   app.get ('/api/checkorg',      isAuthenticated, orgController.check);
-  app.get ('/api/settings',      isAuthenticated, settingsController.fetch);
-  app.post ('/api/settings',     isAuthenticated, settingsController.update);
+  app.get ('/api/getsettings',   isAuthenticated, settingsController.fetch);
+  app.post ('/api/savesettings', isAuthenticated, settingsController.update);
 
   app.post("/api/login", passport.authenticate("local"), async function(req, res) {
     // console.log('passport: ' + JSON.stringify(req));
@@ -112,6 +114,15 @@ module.exports = function(app) {
         id: req.user.id
       });
     }
+  });
+
+  app.get('/api/getpaymentkey', isAuthenticated, async function (req, res) {
+    const key = await sequelize.query("SELECT paymentkey FROM rellayadmin", {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    res.send({ status: 'success', payload: key[0].paymentkey });
+
   });
 };
 
