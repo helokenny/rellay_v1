@@ -362,8 +362,8 @@ async function sendSMS(msg, contacts_, org) {
                     }
                 };
 
-                // let ret = await axios(tosend);
-                let ret = { data: { responseType: "OK" }}
+                let ret = await axios(tosend);
+                // let ret = { data: { responseType: "OK" }}
                 if(ret.data && ret.data.responseType == "OK") successfuls++;
             })
             return { data: { responseType: "OK", successfuls, totalCharge }}
