@@ -364,9 +364,21 @@ async function sendSMS(msg, contacts_, org) {
 
                 let ret = await axios(tosend);
                 // let ret = { data: { responseType: "OK" }}
-                if(ret.data && ret.data.responseType == "OK") successfuls++;
+                if(ret.data && ret.data.responseType == "OK") {
+                    successfuls++;
+
+                    // deduct charge
+                    await models.Org.update({
+                        walletbalance: walletbalance - totalCharge,
+                    }, {
+                        where: {
+                            id: org.id
+                        }
+                    })
+                }
             })
-            return { data: { responseType: "OK", successfuls, totalCharge }}
+            if(successfuls > 0) return { data: { responseType: "OK", successfuls, totalCharge }}
+            return { data: { responseType: "error", msg: "An error occured." }}
 
         } else {
             const contactlist = contacts_.map(k => { return { phone: k.phone, countryId: 234 } });
@@ -377,6 +389,7 @@ async function sendSMS(msg, contacts_, org) {
             totalCharge = Number(numpgs) * Number(charge) * contactlist.length;
             console.log(`numpgs: ${numpgs}; getcharge: ${JSON.stringify(getcharge)}; charge: ${charge}; contactlist.length: ${contactlist.length}`);
             console.log(`walletbalance: ${walletbalance}; totalCharge: ${JSON.stringify(totalCharge)}`);
+
             if(walletbalance < totalCharge) throw { type: 'balance', cost: totalCharge };
 
             console.log(`contacts are = ${JSON.stringify(contactlist)}`);
@@ -398,9 +411,23 @@ async function sendSMS(msg, contacts_, org) {
                 }
             };
 
-            // const to_ret await axios(tosend);
-            // return { data: to_ret.data, successfuls: contactlist.length }}
-            return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
+            const ret = await axios(tosend);
+            if(ret.data && ret.data.responseType == "OK") {
+                successfuls++;
+
+                // deduct charge
+                await models.Org.update({
+                    walletbalance: walletbalance - totalCharge,
+                }, {
+                    where: {
+                        id: org.id
+                    }
+                })
+            }
+                // return { data: ret.data, successfuls: contactlist.length }
+            // return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
+            if(successfuls > 0) return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
+            return { data: { responseType: "error", msg: "An error occured." }}
             
         }
 
