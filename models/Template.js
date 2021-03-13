@@ -9,8 +9,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     name:           {
       type:         DataTypes.STRING,
-      unique:       'unique_template_name',
+      unique:       'unique_org_template_name',
     },
+    orgId:          {
+      type:         DataTypes.INTEGER,
+      unique:       'unique_org_template_name',
+    },
+    switch:        DataTypes.STRING,
     message:        DataTypes.STRING,
     recurrence:     DataTypes.STRING,
     recurrence_week:   DataTypes.INTEGER,

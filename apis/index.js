@@ -6,6 +6,7 @@ const sequelize = require('../config/db');
 const db = require("../models");
 const passport = require("../config/passport");
 const contactController = require('../controllers/ContactController');
+const groupController = require('../controllers/GroupController');
 const memberController = require('../controllers/MemberController');
 const templateController = require('../controllers/TemplateController');
 const messageController = require('../controllers/MessageController');
@@ -28,6 +29,9 @@ module.exports = function(app) {
   app.post ('/api/addcontact',   isAuthenticated, contactController.add);
   app.get ('/api/getmembers',    isAuthenticated, memberController.fetch);
   app.post ('/api/addmember',    isAuthenticated, memberController.add);
+  app.post ('/api/assignmembers',isAuthenticated, memberController.assign);
+  app.get ('/api/getgroups',     isAuthenticated, groupController.fetch);
+  app.post ('/api/addgroup',     isAuthenticated, groupController.add);
   app.get ('/api/gettemplates',  isAuthenticated, templateController.fetch);
   app.post ('/api/addtemplate',  isAuthenticated, templateController.add);
   app.post ('/api/updatetemplate',  isAuthenticated, templateController.update);
@@ -66,15 +70,25 @@ module.exports = function(app) {
         }
       } else throw 'no_org';
 
-      let user = await db.User.create(req.body);
+      const transaction = await sequelize.transaction(async (t) => { 
 
-      await user.update({
-        token: await jwt.generateToken(JSON.parse(JSON.stringify(user)))
-      });
+        let user = await db.User.create(req.body, { transaction: t });
 
-      await models.Setting.create({ orgId: org_.org.id })
-      res.json({ code: "success", user });
+        await user.update({
+          token: await jwt.generateToken(JSON.parse(JSON.stringify(user)))
+        }, { transaction: t });
 
+        await models.Group.create({ 
+          name: 'GENERAL',
+          description: 'This is the general and default group for all members',
+          orgId: org_.org.id,
+          userId: user.id,
+          type: "Functional",
+        }, { transaction: t });
+
+        await models.Setting.create({ orgId: org_.org.id }, { transaction: t });
+        res.json({ code: "success", user });
+      })
     } catch(err) {
       console.log(JSON.stringify(err));
       let msg;

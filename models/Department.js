@@ -15,12 +15,12 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   Department.associate = function (models) {
-    Department.hasMany(models.Member, {
+    /* Department.hasMany(models.Member, {
       foreignKey: 'departmentId',
-    });
-    Department.belongsTo(models.Org, {
+    }); */
+    /* Department.belongsTo(models.Org, {
       foreignKey: 'orgId',
-    });
+    }); */
   }
   
   return Department;

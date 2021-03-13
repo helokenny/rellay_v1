@@ -9,8 +9,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     message:        DataTypes.STRING,
     recipients:     DataTypes.INTEGER,
-    contactId:      DataTypes.INTEGER,
+    recipient_id:   DataTypes.INTEGER,
     fromTemplate:   DataTypes.STRING,
+    switch:         DataTypes.STRING,
   }, {});
 
   Message.associate = function (models) {
@@ -21,7 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'orgId',
     });
     Message.belongsTo(models.Contact, {
-      foreignKey: 'contactId',
+      foreignKey: 'recipient_id',
+    });
+    Message.belongsTo(models.Member, {
+      foreignKey: 'recipient_id',
     });
   }
 

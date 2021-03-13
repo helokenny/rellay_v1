@@ -13,6 +13,7 @@ exports.fetch = async (req, res) => {
         const templates = await models.Template.findAll({
             where: {
                 orgId: req.user.orgId,
+                switch: req.query.switch,
             },
         }).catch(err => {
             console.log('errooooooor: ' + err);
@@ -29,7 +30,7 @@ exports.fetch = async (req, res) => {
 };
 
 exports.add = async (req, res) => {
-    let newTemplate, newScheduledTask;
+    let newTemplate, newScheduledTask, next;
 
     try {
 
@@ -55,6 +56,7 @@ exports.add = async (req, res) => {
             newTemplate = await models.Template.create({
                 name, message, orgId, userId, recurrence, bydateorday, monthday,
                 recurrence_date, timetosend, recurrence_day, recurrence_week, status,
+                switch: req.body.switch,
             }, { transaction: t });
 
             if(!newTemplate) throw 'error';
@@ -62,9 +64,9 @@ exports.add = async (req, res) => {
             if(req.body.recurrenceSwitch) {
                 //  create job in scheduledTasks
                 if(recurrence == 'Annually') {
-                    next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
+                    next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute).second('00');
                 } else if(recurrence == 'Quarterly') {
-                    next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
+                    next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute).second('00');
                 } else if(recurrence == 'Monthly') {
                     let getWeek, getDay;
                     if(bydateorday == 'day') {
@@ -80,18 +82,21 @@ exports.add = async (req, res) => {
                         getDay = moment().date(monthday);
                     }
 
-                    next = getDay.hour(sendAtHour).minute(sendAtMinute);
+                    next = getDay.hour(sendAtHour).minute(sendAtMinute).second('00');
                 } else if(recurrence == 'Weekly') {
-                    next = moment().isoWeekday(recurrence_day).hour(sendAtHour).minute(sendAtMinute);
+                    next = moment().isoWeekday(recurrence_day).hour(sendAtHour).minute(sendAtMinute).second('00');
+                } else if(recurrence == 'Birthdays') {
+                    next = moment().add(1, 'days').hour(sendAtHour).minute(sendAtMinute).second('00');
                 } 
 
 
-                newScheduledTask = await sequelize.query("INSERT INTO scheduledTasks (`orgId`, `userId`, `templateId`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
-                                             "VALUES (:orgId, :userId, :templateId, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
+                newScheduledTask = await sequelize.query("INSERT INTO scheduledTasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
+                                             "VALUES (:orgId, :userId, :templateId, :swtch, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
                                                 replacements: {
                                                     orgId,
                                                     userId,
                                                     templateId: newTemplate.id,
+                                                    swtch: req.body.switch,
                                                     recurrence,
                                                     bydateorday,
                                                     monthday,
@@ -100,7 +105,7 @@ exports.add = async (req, res) => {
                                                     recurrence_day,
                                                     recurrence_week,
                                                     status: "ACTIVE",
-                                                    next,
+                                                    next: new Date(next),
                                                 },
                                                 type: sequelize.QueryTypes.INSERT
                                             }, { transaction: t });
@@ -131,6 +136,7 @@ exports.update = async (req, res) => {
         const transaction = await sequelize.transaction(async (t) => { 
 
             console.log('req.body: ', JSON.stringify(req.body));
+
             const name = req.body.name;
             const message = req.body.message;
             const orgId = req.user.orgId;
@@ -204,12 +210,13 @@ exports.update = async (req, res) => {
                 if(!exists) {
                     //  create
 
-                    newScheduledTask = await sequelize.query("INSERT INTO scheduledTasks (`orgId`, `userId`, `templateId`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
-                    "VALUES (:orgId, :userId, :templateId, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
+                    newScheduledTask = await sequelize.query("INSERT INTO scheduledTasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
+                    "VALUES (:orgId, :userId, :templateId, :swtch, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
                        replacements: {
                            orgId,
                            userId,
-                           templateId: newTemplate.id,
+                           templateId: req.body.id,
+                           swth: req.body.switch,
                            recurrence,
                            bydateorday,
                            monthday,

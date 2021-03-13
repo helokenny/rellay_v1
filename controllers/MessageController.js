@@ -14,10 +14,11 @@ exports.fetch = async (req, res) => {
         const messages = await models.Message.findAll({
             where: {
                 orgId: req.user.orgId,
-                userId: req.user.id
+                userId: req.user.id,
+                switch: req.query.switch
             },
             include: [{
-                model: models.Contact,
+                model: (req.query.switch === 'contact') ? models.Contact : models.Member,
                 attributes: ['id', 'fullname'],
             }]
         }).catch(err => {
@@ -42,45 +43,57 @@ exports.add = async (req, res) => {
         const transaction = await sequelize.transaction(async (t) => { 
             
             const org = await models.Org.findByPk(req.user.orgId,{
-                attributes: ['sender', 'walletbalance']
-            }, { transaction: t });
+                attributes: ['id', 'sender', 'walletbalance']
+            });
+
+            const setting = await models.Setting.findByPk(req.user.orgId,{
+                attributes: ['joint_wallet', 'followup_wallet_balance', 'members_wallet_balance']
+            });
+
+            const walletbalance = setting.joint_wallet 
+                                    ? org.walletbalance 
+                                    : (req.body.switch === 'contact') 
+                                    ? setting.followup_wallet_balance 
+                                    : setting.members_wallet_balance;
 
             const msg = req.body.msg;
             if(!org) throw "no_org";
             if(!org.sender) throw "no_sender";
 
-            let contacts = req.body.contacts;
+            let recipients = req.body.contacts; //[`${req.body.switch}s`];
 
-            console.log(`orgs...`);
+            console.log(`orgs...`); 
 
-            if(!msg || !contacts || contacts.length === 0) throw 'invalid_fields';
+            if(!msg || !recipients || recipients.length === 0) throw 'invalid_fields';
 
             const savemsg = await models.Message.create({
                 message: msg,
                 orgId: req.user.orgId,
                 userId: req.user.id,
-                recipients: contacts.length,
+                recipients: recipients.length,
                 ...(
-                    (contacts.length === 1) ? {
-                        contactId: contacts[0]
+                    (recipients.length === 1) ? {
+                        recipient_id: recipients[0]
                     } : {}
-                )
+                ),
+                switch: req.body.switch
             }, { transaction: t });
 
-            if(!savemsg) throw 'error';
+            if(!savemsg) throw 'error'; 
 
-            const contacts_ = await models.Contact.findAll({
+            const modella = (req.body.switch === 'contact') ? models.Contact : models.Member;
+            const recipients_ = await modella.findAll({
                 where: {
-                    id: contacts,
+                    id: recipients,
                     orgId: req.user.orgId
                 }
             }, { transaction: t });
 
-            count = contacts_.length;
+            count = recipients_.length;
             console.log('konts are ' , JSON.stringify(count));
-            if(!contacts_ || count === 0) throw 'invalid_contacts';
+            if(!recipients_ || count === 0) throw 'invalid_contacts';
 
-            const ret = await sendSMS(msg, contacts_, org);
+            const ret = await sendSMS(msg, recipients_, org, walletbalance, req.body.switch);
             console.log('reeeet: ' + JSON.stringify(ret));
             if(ret.error) throw ret.error;
             console.log('reeeet: 1');
@@ -91,8 +104,8 @@ exports.add = async (req, res) => {
                     status: "success", 
                     count, 
                     successfuls: 1, 
-                    contact: { 
-                        id: contacts_[0].id, fullname: contacts_[0].fullname 
+                    [`${req.body.switch}`]: { 
+                        id: recipients_[0].id, fullname: recipients_[0].fullname 
                     }, 
                     msgid: savemsg.id, 
                     totalcost: ret.data.totalCharge,
@@ -176,7 +189,7 @@ exports.scheduledSend = async (req, res) => {
                         // recurrence: 'Birthdays',
                         id: templateId,
                     },
-                    attributes: ['message', 'userId']
+                    attributes: ['message', 'userId', 'switch']
                 }, {
                     required: true,
                     model: models.Contact,
@@ -223,6 +236,7 @@ exports.scheduledSend = async (req, res) => {
                         } : {}
                     ),
                     fromTemplate: templateId,
+                    switch: template.switch
                 }, { transaction: t });
 
                 if(!savemsg) throw 'error';
@@ -305,10 +319,10 @@ exports.scheduledSend = async (req, res) => {
 
 }
 
-async function sendSMS(msg, contacts_, org) {
+async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
     let totalPages, totalCharge, successfuls;
-    
-    const walletbalance = org.walletbalance;
+
+    // const walletbalance = org.walletbalance;
 
     try {
         const getcharge = await sequelize.query("SELECT costpersms FROM rellayadmin", 
@@ -381,6 +395,7 @@ async function sendSMS(msg, contacts_, org) {
             return { data: { responseType: "error", msg: "An error occured." }}
 
         } else {
+            
             const contactlist = contacts_.map(k => { return { phone: k.phone, countryId: 234 } });
 
             const numpgs = numberOfPages(msg);
@@ -411,7 +426,7 @@ async function sendSMS(msg, contacts_, org) {
                 }
             };
 
-            const ret = await axios(tosend);
+            /* const ret = await axios(tosend);
             if(ret.data && ret.data.responseType == "OK") {
                 successfuls++;
 
@@ -423,15 +438,27 @@ async function sendSMS(msg, contacts_, org) {
                         id: org.id
                     }
                 })
-            }
-                // return { data: ret.data, successfuls: contactlist.length }
-            // return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
+            } 
+
+            // return { data: ret.data, successfuls: contactlist.length }
             if(successfuls > 0) return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
-            return { data: { responseType: "error", msg: "An error occured." }}
+            return { data: { responseType: "error", msg: "An error occured." }}*/
+
+            // deduct charge
+            await models.Org.update({
+                walletbalance: walletbalance - totalCharge,
+            }, {
+                where: {
+                    id: org.id
+                }
+            })
+
+            return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
             
         }
 
     } catch(err) {
+        console.log('errrrrrr: ', err);
         console.log('errrrrrr: ', JSON.stringify(err));
         return { error: err };
     }

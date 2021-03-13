@@ -20,11 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     email:      DataTypes.STRING,
     address:    DataTypes.STRING,
     gender:     DataTypes.STRING,
+    agegroup:     DataTypes.STRING,
+    status:     DataTypes.STRING,
     dob:        DataTypes.DATE,
-    catg:       DataTypes.STRING,
-    departmenttId: DataTypes.INTEGER,
+    // grps:       DataTypes.STRING,
+    // departmenttId: DataTypes.INTEGER,
     is_active:  DataTypes.BOOLEAN,
-    remark:     DataTypes.STRING,
   })
 
   Member.associate = function (models) {
@@ -34,9 +35,17 @@ module.exports = (sequelize, DataTypes) => {
     Member.belongsTo(models.Org, {
       foreignKey: 'orgId'
     });
-    Member.belongsTo(models.Department, {
-      foreignKey: 'departmentId'
+    Member.hasMany(models.Message, {
+      foreignKey: 'recipient_id'
     });
+    Member.belongsToMany(models.Group, {
+      through: models.GroupMember, 
+      foreignKey: 'memberId',
+      as: 'groups',
+    });
+    /* Member.belongsTo(models.Department, {
+      foreignKey: 'departmentId'
+    }); */
   }
   
   return Member;

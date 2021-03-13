@@ -13,6 +13,8 @@ const models = {
   Department:      require(path.join(__dirname, './Department'))(sequelize, Sequelize.DataTypes),
   Contact:         require(path.join(__dirname, './Contact'))(sequelize, Sequelize.DataTypes),
   Member:          require(path.join(__dirname, './Member'))(sequelize, Sequelize.DataTypes),
+  Group:           require(path.join(__dirname, './Group'))(sequelize, Sequelize.DataTypes),
+  GroupMember:     require(path.join(__dirname, './GroupMember'))(sequelize, Sequelize.DataTypes),
   Feedback:        require(path.join(__dirname, './Feedback'))(sequelize, Sequelize.DataTypes),
   Message:         require(path.join(__dirname, './Message'))(sequelize, Sequelize.DataTypes),
   Template:        require(path.join(__dirname, './Template'))(sequelize, Sequelize.DataTypes),

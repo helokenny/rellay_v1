@@ -18,6 +18,9 @@ module.exports = function(sequelize, DataTypes) {
     contact_msg_weight: DataTypes.DOUBLE,
     contact_call_weight: DataTypes.DOUBLE,
     contact_visit_weight: DataTypes.DOUBLE,
+    joint_wallet: DataTypes.BOOLEAN,
+    followup_wallet_balance: DataTypes.DOUBLE,
+    members_wallet_balance: DataTypes.DOUBLE,
   }, {});
 
   Setting.associate = function (models) {

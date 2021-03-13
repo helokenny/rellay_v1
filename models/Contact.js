@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'orgId'
     });
     Contact.hasMany(models.Message, {
-      foreignKey: 'contactId'
+      foreignKey: 'recipient_id'
     });
     Contact.hasMany(models.Feedback, {
       foreignKey: 'contactId'
