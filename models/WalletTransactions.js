@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     txnClass:     DataTypes.STRING,
     txnType:      DataTypes.STRING,
     txnRef:       DataTypes.STRING,
+    txnId:        DataTypes.STRING,
     amount:       DataTypes.DOUBLE,
     balance:      DataTypes.DOUBLE,
   }, {});

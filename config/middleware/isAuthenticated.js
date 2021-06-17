@@ -7,7 +7,7 @@ module.exports = async function(req, res, next) {
   console.log('@isAuthenticated');
   let user = await jwt.verifyToken(req);
   console.log('@isAuthenticated: USER = ' + JSON.stringify(user));
-  if(user.id) {
+  if(user && user.id) {
     req.user = user;
     next();
   }

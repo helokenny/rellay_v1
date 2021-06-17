@@ -13,6 +13,7 @@ const messageController = require('../controllers/MessageController');
 const feedbackController = require('../controllers/FeedbackController');
 const orgController = require('../controllers/OrgController');
 const settingsController = require('../controllers/SettingsController');
+const walletController = require('../controllers/WalletController');
 const jwt = require('../config/jwt');
 // Requiring our models and passport as we've configured it
 //
@@ -42,6 +43,7 @@ module.exports = function(app) {
   app.get ('/api/checkorg',      isAuthenticated, orgController.check);
   app.get ('/api/getsettings',   isAuthenticated, settingsController.fetch);
   app.post ('/api/savesettings', isAuthenticated, settingsController.update);
+  app.post ('/api/savewallet',   isAuthenticated, walletController.update);
 
   app.post("/api/login", passport.authenticate("local"), async function(req, res) {
     // console.log('passport: ' + JSON.stringify(req));

@@ -19,6 +19,7 @@ const models = {
   Message:         require(path.join(__dirname, './Message'))(sequelize, Sequelize.DataTypes),
   Template:        require(path.join(__dirname, './Template'))(sequelize, Sequelize.DataTypes),
   Setting:         require(path.join(__dirname, './Setting'))(sequelize, Sequelize.DataTypes),
+  WalletTransaction: require(path.join(__dirname, './WalletTransaction'))(sequelize, Sequelize.DataTypes),
 };
 
 Object.keys(models).forEach(modelName => {
