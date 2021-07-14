@@ -25,7 +25,7 @@ exports.fetch = async (req, res) => {
             console.log('errooooooor: ' + err);
             res.send({ status: "error", msg: "An error occurred"})
         })
- console.log(`contacts: ${JSON.stringify(messages)}`);
+ console.log(`messages: ${JSON.stringify(messages)}`);
         res.send({ status: "success", messages})
         
     } catch(err) {

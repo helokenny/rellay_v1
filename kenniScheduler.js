@@ -172,14 +172,14 @@ exports.run = () => {
         if(nextSchedule == "_dayMonthly") {
 
           await sequelize.query(
-            `UPDATE scheduledTasks SET next = DATE_ADD(next, INTERVAL ${nextSchedule}) WHERE id = ${jid}`, {
+            `UPDATE .scheduledtasks SET next = DATE_ADD(next, INTERVAL ${nextSchedule}) WHERE id = ${jid}`, {
               type: sequelize.QueryTypes.UPDATE,
           }).catch(err => {
             console.log(err)
           })
         } else {
           await sequelize.query(
-            `UPDATE scheduledTasks SET next = DATE_ADD(next, INTERVAL ${nextSchedule}) WHERE id = ${jid}`, {
+            `UPDATE .scheduledtasks SET next = DATE_ADD(next, INTERVAL ${nextSchedule}) WHERE id = ${jid}`, {
               type: sequelize.QueryTypes.UPDATE,
           }).catch(err => {
             console.log(err)
