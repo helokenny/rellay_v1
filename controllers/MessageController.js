@@ -363,9 +363,8 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     "token":    TSN.TOKEN,
                     "sender":   org.sender,
                     "message":  msg_,
-                    "contacts": [{ phone: k.phone, country: 234 }],
+                    "contacts": [{ phone: k.phone, countryId: 234 }],
                     "schedule": '',
-                    "countryId": 234,
                 }
 
                 let tosend = {
@@ -419,7 +418,6 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 "message":  msg,
                 "contacts": contactlist,
                 "schedule": '',
-                "countryId": 234,
             }
 
             let tosend = {
