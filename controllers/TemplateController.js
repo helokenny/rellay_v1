@@ -62,7 +62,7 @@ exports.add = async (req, res) => {
             if(!newTemplate) throw 'error';
 
             if(req.body.recurrenceSwitch) {
-                //  create job in .scheduledtasks
+                //  create job in scheduledtasks
                 if(recurrence == 'Annually') {
                     next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute).second('00');
                 } else if(recurrence == 'Quarterly') {
@@ -90,7 +90,7 @@ exports.add = async (req, res) => {
                 } 
 
 
-                newScheduledTask = await sequelize.query("INSERT INTO .scheduledtasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
+                newScheduledTask = await sequelize.query("INSERT INTO scheduledtasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
                                              "VALUES (:orgId, :userId, :templateId, :swtch, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
                                                 replacements: {
                                                     orgId,
@@ -164,7 +164,7 @@ exports.update = async (req, res) => {
             if(!updatedTemplate) throw 'error';
 
             //  check if scheduledTask already created
-            const exists = await sequelize.query("SELECT id FROM .scheduledtasks WHERE templateId = :templateId", {
+            const exists = await sequelize.query("SELECT id FROM scheduledtasks WHERE templateId = :templateId", {
                 replacements: {
                     templateId: req.body.id,
                 },
@@ -173,7 +173,7 @@ exports.update = async (req, res) => {
             if(req.body.recurrenceSwitch) {
 
                 console.log('steeeep: 0');
-                //  create job in .scheduledtasks
+                //  create job in scheduledtasks
                 if(recurrence == 'Annually') {
                 console.log('steeeep: 1');
                                 next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
@@ -210,7 +210,7 @@ exports.update = async (req, res) => {
                 if(!exists) {
                     //  create
 
-                    newScheduledTask = await sequelize.query("INSERT INTO .scheduledtasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
+                    newScheduledTask = await sequelize.query("INSERT INTO scheduledtasks (`orgId`, `userId`, `templateId`, `switch`, `recurrence`, `recurrence_date`, `bydateorday`, `monthday`, `recurrence_week`, `recurrence_day`, `next`) " +
                     "VALUES (:orgId, :userId, :templateId, :swtch, :recurrence, :recurrence_date, :bydateorday, :monthday, :recurrence_week, :recurrence_day, :next) ", {
                        replacements: {
                            orgId,
@@ -231,7 +231,7 @@ exports.update = async (req, res) => {
                    }, { transaction: t });
                 } else {
                     //  update
-                    updatedScheduledTask = await sequelize.query("UPDATE .scheduledtasks SET `recurrence` = :recurrence, `recurrence_date` = :recurrence_date, `bydateorday` = :bydateorday, `monthday` = :monthday, `recurrence_week` = :recurrence_week, `recurrence_day` = :recurrence_day, `next` =  :next WHERE templateId = :templateId ", {
+                    updatedScheduledTask = await sequelize.query("UPDATE scheduledtasks SET `recurrence` = :recurrence, `recurrence_date` = :recurrence_date, `bydateorday` = :bydateorday, `monthday` = :monthday, `recurrence_week` = :recurrence_week, `recurrence_day` = :recurrence_day, `next` =  :next WHERE templateId = :templateId ", {
                                                         replacements: {
                                                             templateId: req.body.id,
                                                             recurrence,
@@ -250,7 +250,7 @@ exports.update = async (req, res) => {
                 }
             } else if(exists) {
                 //  destroy
-                await sequelize.query("DELETE FROM .scheduledtasks WHERE templateId = :templateId", {
+                await sequelize.query("DELETE FROM scheduledtasks WHERE templateId = :templateId", {
                     replacements: {
                         templateId: req.body.id,
                     },
