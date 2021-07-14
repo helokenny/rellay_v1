@@ -50,11 +50,11 @@ exports.add = async (req, res) => {
                 attributes: ['joint_wallet', 'followup_wallet_balance', 'members_wallet_balance']
             });
 
-            const walletbalance = setting?.joint_wallet  
+            const walletbalance = setting && setting.joint_wallet  
                                     ? org.walletbalance 
                                     : (req.body.switch === 'contact') 
-                                    ? setting?.followup_wallet_balance 
-                                    : setting?.members_wallet_balance; 
+                                    ? setting && setting.followup_wallet_balance 
+                                    : setting && setting.members_wallet_balance; 
 
             const msg = req.body.msg;
             if(!org) throw "no_org";
