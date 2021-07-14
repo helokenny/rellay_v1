@@ -33,13 +33,13 @@ exports.update = async (req, res) => {
         // console.log(`incoming...${JSON.stringify(req.body)}`)
         const amount = parseFloat(req.body.amount);
 
-        const orgsett = await models.WalletTransaction.findOne({
+        /* const orgsett = await models.WalletTransaction.findOne({
             where: {
                 orgId: req.user.orgId,
                 userId: req.user.id,
             },
             attributes: ['balance']
-        });
+        }); */
         
         const orgsett = await models.WalletTransaction.create({
             orgId: req.user.orgId,
