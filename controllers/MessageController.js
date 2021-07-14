@@ -391,8 +391,9 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                         }
                     })
                 } else {
-                    console.log(JSON.stringify(ret.data));
-                    console.log(JSON.stringify(ret));
+                    console.log('394: ', JSON.stringify(Object.keys(ret)));
+                    console.log('395: ', JSON.stringify(ret.error));
+                    console.log('396: ', JSON.stringify(ret));
                 }
             })
             if(successfuls > 0) return { data: { responseType: "OK", successfuls, totalCharge }}

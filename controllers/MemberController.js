@@ -74,7 +74,7 @@ exports.add = async (req, res) => {
             }, { transaction: t });
 
             //  next, add member to appropriate Natural groups
-            const groupings = await models.Group.find({
+            const groupings = await models.Group.findAll({
                 where: {
                     type: 'Natural',
                     [Sequelize.Op.or]: [
