@@ -392,6 +392,9 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     })
                 } else {
                     console.log('394: ', JSON.stringify(Object.keys(ret)));
+                    console.log('395: ', JSON.stringify(ret.status));
+                    console.log('395: ', JSON.stringify(ret.statusText));
+                    console.log('395: ', JSON.stringify(ret.data));
                     console.log('395: ', JSON.stringify(ret.error));
                     console.log('396: ', JSON.stringify(ret));
                 }
