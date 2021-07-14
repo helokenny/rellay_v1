@@ -30,7 +30,7 @@ exports.fetch = async (req, res) => {
 exports.update = async (req, res) => {
 
     try {
-
+        // console.log(`incoming...${JSON.stringify(req.body)}`)
         const amount = parseFloat(req.body.amount);
 
         const orgsett = await models.WalletTransaction.create({

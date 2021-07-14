@@ -50,11 +50,11 @@ exports.add = async (req, res) => {
                 attributes: ['joint_wallet', 'followup_wallet_balance', 'members_wallet_balance']
             });
 
-            const walletbalance = setting.joint_wallet 
+            const walletbalance = setting?.joint_wallet  
                                     ? org.walletbalance 
                                     : (req.body.switch === 'contact') 
-                                    ? setting.followup_wallet_balance 
-                                    : setting.members_wallet_balance;
+                                    ? setting?.followup_wallet_balance 
+                                    : setting?.members_wallet_balance; 
 
             const msg = req.body.msg;
             if(!org) throw "no_org";
@@ -335,6 +335,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
         .replace(/\[surname\]/g,  'XXXXXXX');
 
         if(msg != msg_) {
+            console.log('handling customized messages...');
 
             //  first iteration to get total cost
             contacts_.forEach(async k => {
@@ -389,13 +390,16 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                             id: org.id
                         }
                     })
+                } else {
+                    console.log(JSON.stringify(ret.data));
+                    console.log(JSON.stringify(ret));
                 }
             })
             if(successfuls > 0) return { data: { responseType: "OK", successfuls, totalCharge }}
             return { data: { responseType: "error", msg: "An error occured." }}
 
         } else {
-            
+            console.log('handling uncustomized messages...');
             const contactlist = contacts_.map(k => { return { phone: k.phone, countryId: 234 } });
 
             const numpgs = numberOfPages(msg);
@@ -426,7 +430,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 }
             };
 
-            /* const ret = await axios(tosend);
+            const ret = await axios(tosend);
             if(ret.data && ret.data.responseType == "OK") {
                 successfuls++;
 
@@ -438,11 +442,14 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                         id: org.id
                     }
                 })
-            } 
+            } else {
+                console.log(JSON.stringify(ret.data));
+                console.log(JSON.stringify(ret));
+            }
 
             // return { data: ret.data, successfuls: contactlist.length }
             if(successfuls > 0) return { data: { responseType: "OK", successfuls: contactlist.length, totalCharge }}
-            return { data: { responseType: "error", msg: "An error occured." }}*/
+            return { data: { responseType: "error", msg: "An error occured." }}
 
             // deduct charge
             await models.Org.update({
