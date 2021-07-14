@@ -98,7 +98,7 @@ exports.add = async (req, res) => {
             if(ret.error) throw ret.error;
             console.log('reeeet: 1');
 
-            if((count === 1) && ret.data && (ret.data.responseType == "OK")) {
+            if((count === 1) && (ret.responseType == "OK")) {
             console.log('reeeet: 2');
                 res.send({ 
                     status: "success", 
@@ -277,7 +277,7 @@ exports.scheduledSend = async (req, res) => {
 
                         // ret = await axios(tosend);
                         ret = { data: { responseType: "OK" }}
-                        if(ret.data && ret.data.responseType == "OK") successfuls++;
+                        if(ret.responseType == "OK") successfuls++;
                     })
                 } else {
                     const contactlist = contacts.map(k => { return { phone: k.phone, countryId: 234 } })
@@ -379,7 +379,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
 
                 let ret = await axios(tosend);
                 // let ret = { data: { responseType: "OK" }}
-                if(ret.data && ret.data.responseType == "OK") {
+                if(ret.responseType === "OK") {
                     successfuls++;
 
                     // deduct charge
@@ -435,7 +435,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             };
 
             const ret = await axios(tosend);
-            if(ret.data && ret.data.responseType == "OK") {
+            if(ret.responseType == "OK") {
                 successfuls++;
 
                 // deduct charge
