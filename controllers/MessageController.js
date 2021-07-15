@@ -380,6 +380,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 let ret = await axios(tosend);
                 // let ret = { data: { responseType: "OK" }}
                 if(ret.responseType === "OK") {
+                    console.log('successfuls: ');
                     successfuls++;
 
                     // deduct charge
@@ -396,9 +397,9 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     console.log('395: ', JSON.stringify(ret.statusText));
                     console.log('395: ', JSON.stringify(ret.data));
                     console.log('395: ', JSON.stringify(ret.error));
-                    console.log('396: ', JSON.stringify(ret));
                 }
             })
+            console.log('successfuls >> ', successfuls);
             if(successfuls > 0) return { data: { responseType: "OK", successfuls, totalCharge }}
             return { data: { responseType: "error", msg: "An error occured." }}
 
