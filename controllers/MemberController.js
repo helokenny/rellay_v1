@@ -66,7 +66,7 @@ exports.add = async (req, res) => {
         let defaultGroup;
 
         const transaction = await sequelize.transaction(async (t) => { 
-            console.log(`user.body >> ${JSON.stringify(user.body)}`);
+            console.log(`user.body >> ${JSON.stringify(req.body)}`);
             const member = await models.Member.create(req.body, { transaction: t });
 
             //  first
