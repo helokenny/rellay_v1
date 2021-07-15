@@ -63,13 +63,14 @@ exports.add = async (req, res) => {
 
         req.body.userId = req.user.id;
         req.body.orgId = req.user.orgId;
+        let defaultGroup;
 
         const transaction = await sequelize.transaction(async (t) => { 
             console.log(`user.body >> ${JSON.stringify(user.body)}`);
             const member = await models.Member.create(req.body, { transaction: t });
 
             //  first
-            const defaultGroup = await models.GroupMember.create({
+            defaultGroup = await models.GroupMember.create({
                 groupId: req.body.grps,     //  THIS HAS TO BE THE 'GENERAL' group id. Members can only be added to this group on creation
                 memberId: member.id
             }, { transaction: t });
