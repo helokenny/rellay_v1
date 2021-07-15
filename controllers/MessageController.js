@@ -337,17 +337,19 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
 
         if(msg != msg_) {
             console.log('handling customized messages...');
-
+            
             //  first iteration to get total cost
             contacts_.forEach(k => {
                 let msg_ = msg
                 .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                 .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
-
+                
                 const numpgs = numberOfPages(msg_);
                 if(numpgs === 0) throw { type: 'longmessage', count: msg_.length };
                 totalPages += numpgs;
+                
+                console.log('totalPages :>> ', totalPages, ' >>> numpgs => ', numpgs, ' >>> msg_ => ', msg_, ' >>> msg => ', msg);
             })
 
             totalCharge = totalPages * charge;
