@@ -321,7 +321,7 @@ exports.scheduledSend = async (req, res) => {
 }
 
 async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
-    let totalPages, totalCharge, successfuls;
+    let totalPages, totalCharge, successfuls = 0;
 
     // const walletbalance = org.walletbalance;
 
