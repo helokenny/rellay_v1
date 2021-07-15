@@ -251,7 +251,8 @@ exports.scheduledSend = async (req, res) => {
 
                 if(msg != msg_) {
                     count = contacts_.length;
-                    contacts.forEach(async k => {
+                    for(let x = 0; x < contacts_.length; x++) {
+                        const k = contacts_[x];
                         let msg_ = msg
                         .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                         .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
@@ -278,7 +279,7 @@ exports.scheduledSend = async (req, res) => {
                         // ret = await axios(tosend);
                         ret = { data: { responseType: "OK" }}
                         if(ret.responseType == "OK") successfuls++;
-                    })
+                    }
                 } else {
                     const contactlist = contacts.map(k => { return { phone: k.phone, countryId: 234 } })
                     console.log(`contacts are = ${JSON.stringify(contactlist)}`);
@@ -338,7 +339,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             console.log('handling customized messages...');
 
             //  first iteration to get total cost
-            contacts_.forEach(async k => {
+            contacts_.forEach(k => {
                 let msg_ = msg
                 .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
@@ -354,7 +355,8 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
 
             console.log('contacts_:>> ', JSON.stringify(contacts_));
             //  second iteration to send message
-            contacts_.forEach(async k => {
+            for(let x = 0; x < contacts_.length; x++) {
+                const k = contacts_[x];
                 let msg_ = msg
                 .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
@@ -403,7 +405,8 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     console.log('395: ', JSON.stringify(ret.data));
                     console.log('395: ', JSON.stringify(ret.error));
                 }
-            })
+            }
+            
             console.log('successfuls >> ', successfuls);
             if(successfuls > 0) return { data: { responseType: "OK", successfuls, totalCharge }}
             return { data: { responseType: "error", msg: "An error occured." }}
