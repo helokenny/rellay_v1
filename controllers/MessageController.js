@@ -351,6 +351,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             })
 
             totalCharge = totalPages * charge;
+            console.log('totalPages :>> ', totalPages, ' >>> charge => ', charge, ' >>> totalCharge => ', totalCharge);
             if(walletbalance < totalCharge) throw { type: 'balance', cost: totalCharge };
 
             console.log('contacts_:>> ', JSON.stringify(contacts_), ' >>> walletbalance => ', walletbalance, ' >>> totalCharge => ', totalCharge);
