@@ -98,7 +98,7 @@ exports.add = async (req, res) => {
             if(ret.error) throw ret.error;
             console.log('reeeet: 1');
 
-            if((count === 1) && (ret.responseType == "OK")) {
+            if((count === 1) && (ret.data.responseType == "OK")) {
             console.log('reeeet: 2');
                 res.send({ 
                     status: "success", 
@@ -278,7 +278,7 @@ exports.scheduledSend = async (req, res) => {
 
                         // ret = await axios(tosend);
                         ret = { data: { responseType: "OK" }}
-                        if(ret.responseType == "OK") successfuls++;
+                        if(ret.data.responseType == "OK") successfuls++;
                     }
                 } else {
                     const contactlist = contacts.map(k => { return { phone: k.phone, countryId: 234 } })
