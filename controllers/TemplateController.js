@@ -201,7 +201,8 @@ exports.update = async (req, res) => {
                                 next = getDay.hour(sendAtHour).minute(sendAtMinute);
                 console.log('steeeep: 6 :', getDay, ' - ', sendAtHour, ' - ', sendAtMinute);
                             } else if(recurrence == 'Weekly') {
-                console.log('steeeep: 7');
+                console.log('steeeep: 7', recurrence_day, ' - ', sendAtHour, ' - ', sendAtMinute);
+                console.log('steeeep: 7', moment().isoWeekday(12).hour(6).minute(32));
                                 next = moment().isoWeekday(recurrence_day).hour(sendAtHour).minute(sendAtMinute);
                             } 
                 
