@@ -386,6 +386,10 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 console.log('pre-axios:>> ');
                 let ret = await axios(tosend);
                 // let ret = { data: { responseType: "OK" }}
+                console.log('389: ', JSON.stringify(ret.status));
+                console.log('390: ', JSON.stringify(ret.statusText));
+                console.log('391: ', JSON.stringify(ret.data));
+                console.log('392: ', JSON.stringify(ret.error));
                 if(ret.statusText === "OK") {
                     console.log('successfuls: ');
                     successfuls++;
