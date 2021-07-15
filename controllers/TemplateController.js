@@ -102,7 +102,7 @@ exports.add = async (req, res) => {
                                                     monthday,
                                                     recurrence_date,
                                                     timetosend,
-                                                    recurrence_day,
+                                                    monthday: recurrence_day,
                                                     recurrence_week,
                                                     status: "ACTIVE",
                                                     next: new Date(next),
@@ -177,34 +177,34 @@ exports.update = async (req, res) => {
                 if(recurrence == 'Annually') {
                 console.log('steeeep: 1');
                                 next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
-                            } else if(recurrence == 'Quarterly') {
-                console.log('steeeep: 2');
-                                next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
-                            } else if(recurrence == 'Monthly') {
+                } else if(recurrence == 'Quarterly') {
+    console.log('steeeep: 2');
+                    next = moment(recurrence_date).hour(sendAtHour).minute(sendAtMinute);
+                } else if(recurrence == 'Monthly') {
                 console.log('steeeep: 3');
-                                let getWeek, getDay;
-                                if(bydateorday == 'day') {
+                    let getWeek, getDay;
+                    if(bydateorday == 'day') {
                 
                 console.log('steeeep: 4');
-                                    if(recurrence_week === 0) {
-                                        getWeek = (moment().add(1, 'months').date(1).week() - 1) || 52;
-                                    } else {
-                                        getWeek = moment().date(1).week() + recurrence_week - 1;
-                                    }
+                        if(recurrence_week === 0) {
+                            getWeek = (moment().add(1, 'months').date(1).week() - 1) || 52;
+                        } else {
+                            getWeek = moment().date(1).week() + recurrence_week - 1;
+                        }
+    
+                        getDay = moment().week(getWeek).isoWeekday(recurrence_day);
+                    } else {
+                        getDay = moment().date(monthday);
+    console.log('steeeep: 5 : ', new Date(getDay), ' - ', monthday);
+                    }
                 
-                                    getDay = moment().week(getWeek).isoWeekday(recurrence_day);
-                                } else {
-                                    getDay = moment().date(monthday);
-                console.log('steeeep: 5 : ', new Date(getDay), ' - ', monthday);
-                                }
-                
-                                next = getDay.hour(sendAtHour).minute(sendAtMinute);
+                    next = getDay.hour(sendAtHour).minute(sendAtMinute);
                 console.log('steeeep: 6 :', getDay, ' - ', sendAtHour, ' - ', sendAtMinute);
-                            } else if(recurrence == 'Weekly') {
+                } else if(recurrence == 'Weekly') {
                 console.log('steeeep: 7', recurrence_day, ' - ', sendAtHour, ' - ', sendAtMinute);
                 console.log('steeeep: 7', moment().isoWeekday(12).hour(6).minute(32));
-                                next = moment().isoWeekday(recurrence_day).hour(sendAtHour).minute(sendAtMinute);
-                            } 
+                    next = moment().isoWeekday(recurrence_day).hour(sendAtHour).minute(sendAtMinute);
+                } 
                 
                 console.log('steeeepy: ', next);
                 
@@ -240,7 +240,7 @@ exports.update = async (req, res) => {
                                                             monthday,
                                                             recurrence_date,
                                                             timetosend,
-                                                            recurrence_day,
+                                                            monthday: recurrence_day,
                                                             recurrence_week,
                                                             status: "ACTIVE",
                                                             next: next.format('YYYY-MM-DD HH:mm:ss'),
