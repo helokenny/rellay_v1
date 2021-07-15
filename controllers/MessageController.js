@@ -353,7 +353,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             totalCharge = totalPages * charge;
             if(walletbalance < totalCharge) throw { type: 'balance', cost: totalCharge };
 
-            console.log('contacts_:>> ', JSON.stringify(contacts_));
+            console.log('contacts_:>> ', JSON.stringify(contacts_), ' >>> walletbalance => ', walletbalance, ' >>> totalCharge => ', totalCharge);
             //  second iteration to send message
             for(let x = 0; x < contacts_.length; x++) {
                 const k = contacts_[x];
