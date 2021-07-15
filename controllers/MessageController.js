@@ -352,12 +352,16 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             totalCharge = totalPages * charge;
             if(walletbalance < totalCharge) throw { type: 'balance', cost: totalCharge };
 
+            console.log('contacts_:>> ', JSON.stringify(contacts_));
             //  second iteration to send message
             contacts_.forEach(async k => {
                 let msg_ = msg
                 .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                 .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
+
+                console.log('contacts_:>> ', JSON.stringify(contacts_));
+
 
                 const data = {
                     "token":    TSN.TOKEN,
@@ -377,6 +381,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     }
                 };
 
+                console.log('pre-axios:>> ');
                 let ret = await axios(tosend);
                 // let ret = { data: { responseType: "OK" }}
                 if(ret.responseType === "OK") {
