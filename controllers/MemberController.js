@@ -63,14 +63,14 @@ exports.add = async (req, res) => {
 
         req.body.userId = req.user.id;
         req.body.orgId = req.user.orgId;
-        let defaultGroup, member;
+        // let defaultGroup, member;
 
         const transaction = await sequelize.transaction(async (t) => { 
             console.log(`user.body >> ${JSON.stringify(req.body)}`);
-            member = await models.Member.create(req.body, { transaction: t });
+            const member = await models.Member.create(req.body, { transaction: t });
 
             //  first
-            defaultGroup = await models.GroupMember.create({
+            const defaultGroup = await models.GroupMember.create({
                 groupId: req.body.grps,     //  THIS HAS TO BE THE 'GENERAL' group id. Members can only be added to this group on creation
                 memberId: member.id
             }, { transaction: t });
@@ -102,11 +102,11 @@ exports.add = async (req, res) => {
                 }, { transaction: t });
             }
 
+            if(defaultGroup) res.send({ status: 'success', id: member.id, grps: groupings });
+            else res.send({ status: 'error', msg: "An error occured, please try again later." })
+                
         })
 
-        if(defaultGroup && member) res.send({ status: 'success', id: member.id, grps: groupings });
-        else res.send({ status: 'error', msg: "An error occured, please try again later." })
-            
     } catch(err) {
         console.log('CAUGHT ERROR: ' + err);
         res.send({ status: 'error', msg: "An error has occured, please try again later." });
