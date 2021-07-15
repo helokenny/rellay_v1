@@ -63,11 +63,11 @@ exports.add = async (req, res) => {
 
         req.body.userId = req.user.id;
         req.body.orgId = req.user.orgId;
-        let defaultGroup;
+        let defaultGroup, member;
 
         const transaction = await sequelize.transaction(async (t) => { 
             console.log(`user.body >> ${JSON.stringify(req.body)}`);
-            const member = await models.Member.create(req.body, { transaction: t });
+            member = await models.Member.create(req.body, { transaction: t });
 
             //  first
             defaultGroup = await models.GroupMember.create({
@@ -104,7 +104,7 @@ exports.add = async (req, res) => {
 
         })
 
-        if(defaultGroup) res.send({ status: 'success', id: member.id, grps: groupings });
+        if(defaultGroup && member) res.send({ status: 'success', id: member.id, grps: groupings });
         else res.send({ status: 'error', msg: "An error occured, please try again later." })
             
     } catch(err) {
