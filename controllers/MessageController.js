@@ -348,15 +348,11 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 const numpgs = numberOfPages(msg_);
                 if(numpgs === 0) throw { type: 'longmessage', count: msg_.length };
                 totalPages += numpgs;
-                
-                console.log('totalPages :>> ', totalPages, ' >>> numpgs => ', numpgs, ' >>> msg_ => ', msg_, ' >>> msg => ', msg);
             })
 
             totalCharge = totalPages * charge;
-            console.log('totalPages :>> ', totalPages, ' >>> charge => ', charge, ' >>> totalCharge => ', totalCharge);
             if(walletbalance < totalCharge) throw { type: 'balance', cost: totalCharge };
 
-            console.log('contacts_:>> ', JSON.stringify(contacts_), ' >>> walletbalance => ', walletbalance, ' >>> totalCharge => ', totalCharge);
             //  second iteration to send message
             for(let x = 0; x < contacts_.length; x++) {
                 const k = contacts_[x];
@@ -364,9 +360,6 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                 .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
-
-                console.log('contacts_:>> ', JSON.stringify(contacts_));
-
 
                 const data = {
                     "token":    TSN.TOKEN,
@@ -388,6 +381,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
 
                 console.log('pre-axios:>> ');
                 let ret = await axios(tosend);
+                console.log(`>>>>>> ${JSON.stringify(Object.keys(ret))}`);
                 // let ret = { data: { responseType: "OK" }}
                 console.log('389: ', JSON.stringify(ret.status));
                 console.log('390: ', JSON.stringify(ret.statusText));
@@ -451,6 +445,11 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             };
 
             const ret = await axios(tosend);
+            console.log(`>>>>>> ${JSON.stringify(Object.keys(ret))}`);
+            console.log('395: ', JSON.stringify(ret.status));
+            console.log('395: ', JSON.stringify(ret.statusText));
+            console.log('395: ', JSON.stringify(ret.data));
+            console.log('395: ', JSON.stringify(ret.error));
             if(ret.statusText === "OK") {
                 successfuls++;
 
