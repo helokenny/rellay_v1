@@ -379,7 +379,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     }
                 };
 
-                console.log('pre-axios:>> ');
+                console.log(`pre-axios:>> ${JSON.stringify(tosend)}`);
                 let ret = await axios(tosend);
                 console.log(`>>>>>> ${JSON.stringify(Object.keys(ret))}`);
                 // let ret = { data: { responseType: "OK" }}
@@ -444,6 +444,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 }
             };
 
+            console.log(`pre-axios:>> ${JSON.stringify(tosend)}`);
             const ret = await axios(tosend);
             console.log(`>>>>>> ${JSON.stringify(Object.keys(ret))}`);
             console.log('395: ', JSON.stringify(ret.status));
