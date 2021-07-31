@@ -367,6 +367,11 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                     "message":  msg_,
                     "contacts": [{ phone: k.phone, countryId: 234 }],
                     "schedule": '',
+                    "aux_type_1": "0",
+                    "aux_type_2": "0",
+                    "aux_type_3": "0",
+                    "aux_type_4": "0",
+                    "aux_type_5": "0"
                 }
 
                 let tosend = {
@@ -432,7 +437,12 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
                 "message":  msg,
                 "contacts": contactlist,
                 "schedule": '',
-            }
+                "aux_type_1": "0",
+                "aux_type_2": "0",
+                "aux_type_3": "0",
+                "aux_type_4": "0",
+                "aux_type_5": "0",
+        }
 
             let tosend = {
                 method: 'POST',
