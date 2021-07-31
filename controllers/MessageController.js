@@ -254,7 +254,7 @@ exports.scheduledSend = async (req, res) => {
                     for(let x = 0; x < contacts_.length; x++) {
                         const k = contacts_[x];
                         let msg_ = msg
-                        .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
+                        .replace(/\[title\]/g,  (k.gender.toLowerCase() == 'female') ? 'Sis.' : 'Bro.')
                         .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                         .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
 
@@ -341,7 +341,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             //  first iteration to get total cost
             contacts_.forEach(k => {
                 let msg_ = msg
-                .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
+                .replace(/\[title\]/g,  (k.gender.toLowerCase() == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                 .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
                 
@@ -357,7 +357,7 @@ async function sendSMS(msg, contacts_, org, walletbalance, swtch) {
             for(let x = 0; x < contacts_.length; x++) {
                 const k = contacts_[x];
                 let msg_ = msg
-                .replace(/\[title\]/g,  (k.gender == 'female') ? 'Sis.' : 'Bro.')
+                .replace(/\[title\]/g,  (k.gender.toLowerCase() == 'female') ? 'Sis.' : 'Bro.')
                 .replace(/\[firstname\]/g,  k.fullname.split(' ')[0])
                 .replace(/\[surname\]/g,  (k.fullname.split(' ').length > 1) ? k.fullname.split(' ')[1] : '')
 
